@@ -122,11 +122,7 @@ def game_loop():
 
 def get_choice():
 	print('\n\nChoices:')
-	for choice in choices:
-		if choice[0] != 'gun':
-			print(f'{choice[0]}, ', end='')
-		else:
-			print('gun')
+	print(', '.join(choices[i][0] for i in range(15)))
 
 	computer_choice = random.randint(0, 14)
 	my_choice = input('\nWhat do you choose?\n\n    ')
