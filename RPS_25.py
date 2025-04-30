@@ -193,7 +193,7 @@ choices = (
 			(' produces ', 'air', ''),
 			(' creates ', 'bowl', ''),
 			(' drinks ', 'water', ''),
-			(' ensnares ', 'alien', ' ship'),
+			(' ensnares ', 'alien', '\'s ship'),
 			(' shelters ', 'dragon', ''),
 			(' imprisons ', 'devil', ''),
 			(' attracts ', 'lightning', '')
@@ -517,11 +517,7 @@ def game_loop():
 
 def get_choice():
 	print('\n\nChoices:')
-	for choice in choices:
-		if choice[0] != 'gun':
-			print(f'{choice[0]}, ', end='')
-		else:
-			print('gun')
+	print(', '.join(choices[i][0] for i in range(25)))
 
 	computer_choice = random.randint(0, 24)
 	my_choice = input('\nWhat do you choose?\n\n	')
