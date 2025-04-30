@@ -18,8 +18,9 @@ def game_loop():
 		print(f"\nChoices:\n  {textwrap.fill(print_choices, width=shutil.get_terminal_size().columns)}\n")
 		my_choice = get_choice()
 		if my_choice[0] != 'error':
+			fix_choice(my_choice)
 			Continue = get_outcomes(my_choice[0])
-			while Continue != 'y' and Continue != 'n' and Continue != '':
+			while Continue not in ('y', 'n', ''):
 				print('\nError. Please use y/n')
 				Continue = get_outcomes(my_choice[0])
 		else:
@@ -27,6 +28,18 @@ def game_loop():
 	print_win(*my_choice)
 	play_again()
 		
+def fix_choice(choice):
+	if type(choice) == list:
+		for i, v in enumerate(choice):
+			if v == 'Platinum':
+				# Platinum is a typo in the API.
+				choice[i] = 'Platimum'
+	else:
+		if choice == 'Platimum':
+			return 'Platinum'
+		else:
+			return choice
+
 
 def get_choice():
 	string = input('What is your choice?\t')
@@ -37,7 +50,6 @@ def get_choice():
 			return [choice, ai]
 	print('\nChoice not found. Please select something from the list of items.')
 	return ['error']
-			
 
 def create_string(List):
 	new_list = [item[1] for item in List]
@@ -48,18 +60,19 @@ def get_outcomes(my_choice):
 	response = requests.get(url_outcomes)
 	outcomes = response.json()
 	winning = create_string(outcomes['winning outcomes'])
-	return input(f'\n{my_choice} beats:\n  {textwrap.fill(winning, width=int(shutil.get_terminal_size().columns*.5))}.\n\nAre you Sure? y/n  ')
+	return input(f'\n{fix_choice(my_choice)} beats:\n  {textwrap.fill(winning, width=int(shutil.get_terminal_size().columns*.5))}.\n\nAre you Sure? y/n  ')
 
 def print_win(obj1, obj2):
 	url_result = f'https://rps101.pythonanywhere.com/api/v1/match?object_one={obj1}&object_two={choices[obj2]}'
 	response = requests.get(url_result)
 	result = response.json()
+
 	if obj1 == result['winner']:
-		print(f"\nWin!\n{result['winner']} {result['outcome']} {result['loser']}")
+		print(f"\nWin!\n{fix_choice(result['winner'])} {result['outcome']} {fix_choice(result['loser'])}")
 	elif choices[obj2] == result['winner']:
-		print(f"\nLose...\n{result['winner']} {result['outcome']} {result['loser']}")
+		print(f"\nLose...\n{fix_choice(result['winner'])} {result['outcome']} {fix_choice(result['loser'])}")
 	elif obj1 == obj2 == result['winner']:
-		print(f"Tie.\n{result['winner']} {result['outcome']} {result['loser']}")
+		print(f"Tie.\n{fix_choice(result['winner'])} {result['outcome']} {fix_choice(result['loser'])}")
 	else:
 		print(f'{result}\n{obj1}\n{obj2}')
 
